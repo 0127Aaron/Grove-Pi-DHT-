@@ -1,0 +1,23 @@
+from grovepi import dht
+from ISStreamer.Streamer import Streamer
+import time
+
+# --------- User Settings ---------
+SENSOR_LOCATION_NAME = "SC03"
+BUCKET_NAME = "sensorNet"
+BUCKET_KEY = "YGBFFSW4A4MC"
+ACCESS_KEY = "ist_YqWFW04BGhSQYbbwdimbzZm18xh2sXE-"
+MINUTES_BETWEEN_READS = 10
+METRIC_UNITS = False
+# ---------------------------------
+
+streamer = Streamer(bucket_name=BUCKET_NAME, bucket_key=BUCKET_KEY, access_key=ACCESS_KEY)
+while True:
+	temp_c = dht(7,0)[0]
+	if METRIC_UNITS:
+		streamer.log(SENSOR_LOCATION_NAME + " Temperature(C)", temp_c)
+	else:
+		temp_f = format(temp_c * 9.0 / 5.0 + 32.0, ".2f")
+		streamer.log(SENSOR_LOCATION_NAME + " Temperature(F)", temp_f)
+	streamer.flush()
+	time.sleep(60*MINUTES_BETWEEN_READS)
